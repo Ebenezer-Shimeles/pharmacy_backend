@@ -9,7 +9,7 @@ export class Category extends BaseEntity{
     id: number;
 
 
-    @Column({length: 20})
+    @Column({length: 20, unique: true})
     name: string;
 
     @OneToMany(type=> Product,  product => product.category)

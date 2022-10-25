@@ -11,8 +11,11 @@ export class Promo extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => Product)
-    forProduct: Product;
+    @Column()
+    title: string
+
+    @Column()
+    news: string;
     
     @Column({name: 'pic_url'})
     picUrl: string;
