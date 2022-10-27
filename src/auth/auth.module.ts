@@ -20,10 +20,11 @@ import { RetailerService } from 'src/retailer/retailer.service';
     ConfigModule,
      AdminModule,
     // ConfigModule.forFeature({}),
-     JwtModule.register({
-       secret: 'dsddds',
-       signOptions: {expiresIn: '500s'}
-     }),
+    JwtModule,
+    //  JwtModule.register({
+    //    secret: 'dsddds',
+    //    signOptions: {expiresIn: '500s'}
+    //  }),
      RetailerModule,
 
      ProviderModule,

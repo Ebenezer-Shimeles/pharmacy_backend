@@ -21,6 +21,7 @@ import { AuthModule } from './auth/auth.module';
 import { Admin } from './admin/admin.model';
 import { RetailerTransaction } from './retailer/retailer.transaction.model';
 import { Permission } from './admin/permission.models';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -41,6 +42,10 @@ import { Permission } from './admin/permission.models';
     RetailerModule,
     AuthModule,
     AdminModule,
+    JwtModule.register({
+      secretOrPrivateKey: process.env.JWT_SECRET,
+      signOptions: {expiresIn: '600s'}
+    }) ,
     CartModule,
     
 
