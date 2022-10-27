@@ -7,7 +7,7 @@ import { RetailerService } from './retailer.service';
 export class RetailerController {
     constructor(private retailerService: RetailerService){}
     @UseGuards(IsRetailerAuthenticated)
-    @Get()
+    @Get('me')
     async getRetailer(@Request() request){
         return request.user;
     }

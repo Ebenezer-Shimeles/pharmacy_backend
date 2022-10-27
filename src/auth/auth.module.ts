@@ -26,6 +26,7 @@ import { RetailerService } from 'src/retailer/retailer.service';
     //    signOptions: {expiresIn: '500s'}
     //  }),
      RetailerModule,
+     ConfigModule,
 
      ProviderModule,
      

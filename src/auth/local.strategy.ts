@@ -21,7 +21,7 @@ export class LocalStrategy extends PassportStrategy(Strategy){
 
         if(!user){
             Logger.log('user is null')
-            throw new BadRequestException({error: 'Error in password or email'})
+            throw new BadRequestException({error: 'Error! Error in password or email'})
 
         }
         return user

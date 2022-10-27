@@ -27,6 +27,7 @@ export class AuthController {
 
     @Post('provider')
     async loginProvider(@Body()  input: CompanyAuthInputDTO){
+        Logger.log('Loggin in: ' + input)
         const response =  await this.authService.loginProvider(input)
         if(!response) throw new BadRequestException({error: "Error in password or phone number"})
         return response;

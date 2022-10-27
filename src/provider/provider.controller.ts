@@ -1,17 +1,19 @@
-import { Body, Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind } from '@nestjs/common';
 import {  CompanyInputDTO, CompanyOutputDTO } from 'src/app.dto';
 import { IsProviderAuthenticated } from 'src/company.strategy';
+
 import { ProviderService } from './provider.service';
 
 @Controller('providers')
 export class ProviderController {
     constructor(private providerService: ProviderService){}
+
+
     @UseGuards(IsProviderAuthenticated)
-    @Get()
-    async getProvider( request){
-         return request.user;
+    @Get('me')
+    async getProvider(@Request() request){
+        return request.user;
     }
-  
     @Post()
     async addProvider(@Body() company: CompanyInputDTO): Promise<null | CompanyOutputDTO>{
          const output = new CompanyOutputDTO();

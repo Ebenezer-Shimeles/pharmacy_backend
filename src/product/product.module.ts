@@ -4,9 +4,10 @@ import { ProductController } from './product.controller';
 import {IsProviderAuthenticated} from 'src/company.strategy'
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ProviderService } from 'src/provider/provider.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
-  providers: [ProductService, IsProviderAuthenticated, JwtService, ProviderService],
+  providers: [ProductService, IsProviderAuthenticated, JwtService, ProviderService, ConfigService],
   controllers: [ProductController],
-  imports: [JwtModule]
+  imports: [JwtModule, ConfigModule]
 })
 export class ProductModule {}

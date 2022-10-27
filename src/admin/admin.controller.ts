@@ -10,8 +10,9 @@ export class AdminController {
      
         constructor(private adminService: AdminService){}
         @UseGuards(AuthGuard('jwt'))
-        @Get('profile')
+        @Get('me')
         async getProfile(@Request() req){
+            
             return  req.user;
         }
 
