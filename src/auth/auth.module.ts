@@ -11,12 +11,15 @@ import { ProviderModule } from 'src/provider/provider.module';
 import { RetailerModule } from 'src/retailer/retailer.module';
 import { ProviderService } from 'src/provider/provider.service';
 import { RetailerService } from 'src/retailer/retailer.service';
+import { MessagingModule } from 'src/messaging/messaging.module';
+import { MessagingService } from 'src/messaging/messaging.service';
 
 @Module({
-  providers: [AuthService, AdminService, LocalStrategy, JwtStrategy, ProviderService, RetailerService],
+  providers: [AuthService, AdminService, LocalStrategy, JwtStrategy, ProviderService, RetailerService, MessagingService],
   exports: [AuthService],
   imports: 
   [
+    MessagingModule,
     ConfigModule,
      AdminModule,
     // ConfigModule.forFeature({}),

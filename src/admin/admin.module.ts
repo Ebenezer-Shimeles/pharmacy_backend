@@ -4,9 +4,11 @@ import { AdminController } from './admin.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 
+
 @Module({
   providers: [AdminService],
   controllers: [AdminController],
+  imports: []
   //imports: [AuthModule, ]
 })
 export class AdminModule {}

@@ -22,6 +22,9 @@ import { Admin } from './admin/admin.model';
 import { RetailerTransaction } from './retailer/retailer.transaction.model';
 import { Permission } from './admin/permission.models';
 import { JwtModule } from '@nestjs/jwt';
+import { MessagingService } from './messaging/messaging.service';
+import { MessagingModule } from './messaging/messaging.module';
+
 
 @Module({
   imports: [
@@ -36,6 +39,7 @@ import { JwtModule } from '@nestjs/jwt';
       entities: [Permission, Admin, Category, Product, Promo, Provider, Retailer, ProductEntry, CartEntry, RetailerTransaction],
       synchronize: true,
     }),
+  
     ProductModule,
     ProviderModule,
     PromotionModule,
@@ -47,12 +51,13 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: {expiresIn: '600s'}
     }) ,
     CartModule,
+    MessagingModule,
     
 
     
   ],
 
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MessagingService],
 })
 export class AppModule {}

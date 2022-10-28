@@ -29,4 +29,10 @@ export abstract class  Company extends BaseEntity{
 
     @Column({name: 'bank_account', length: 50})
     bankAccount: string;
+
+    @Column({name: 'is_verified', default: false})
+    isVerified: boolean;
+    
+    @Column({name: 'is_verified_admin', default: true})
+    isVerifiedAdmin: boolean;
 }

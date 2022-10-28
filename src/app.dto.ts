@@ -61,7 +61,29 @@ export class AdminInputDTO{
     @IsNotEmpty()
     lastName: string;
 }
+export class VerifyCompanyDto{
+    @IsNotEmpty()
+    verificationCode: string | number;
+}
 
+export class ChangePasswordFromOutsideInput{
+    
+    @IsOptional()
+    verificationCode?: number | string
+
+    @IsNotEmpty()
+    phoneNumber: string;
+    
+    @IsOptional()
+    password?: string;
+}
+export class ChangePasswordFromInsideInput{
+    @IsNotEmpty()
+    oldPassword: string;
+
+    @IsNotEmpty()
+    newPassword: string;
+}
 export class AddProductDTO{
     @IsNotEmpty()
     
