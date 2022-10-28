@@ -35,4 +35,7 @@ export abstract class  Company extends BaseEntity{
     
     @Column({name: 'is_verified_admin', default: true})
     isVerifiedAdmin: boolean;
+
+    @Column({name: 'pic_loc', default: ''})
+    picLocation: string;
 }

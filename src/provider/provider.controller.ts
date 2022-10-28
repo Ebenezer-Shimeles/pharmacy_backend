@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , BadRequestException, Patch, Param} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , BadRequestException, Patch, Param, UseInterceptors, UploadedFile} from '@nestjs/common';
 import { request } from 'http';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
 import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,AddProductInputDTO, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import { IsCompanyVerified, IsProviderAuthenticated } from 'src/company.strategy';
 import { Query } from 'typeorm/driver/Query';
@@ -15,6 +16,19 @@ export class ProviderController {
          await this.providerService.changeInfo(request.user, input);
          return {msg: "Changed!"}
     }
+    @UseGuards(IsProviderAuthenticated)
+    //  @UseInterceptors(FileInterceptor('file'))
+      @Post('me/picture')
+      @UseInterceptors(FileInterceptor('file'))
+     async changeProPic(@UploadedFile() file: Express.Multer.File, @Request() request) {
+         if(!file) throw new BadRequestException({error: "No files found!"})
+  
+         const retailer = await this.providerService.findByPhoneNumber(request.user.phoneNumber);
+         retailer.picLocation = file.filename;
+         retailer.save();
+         return {msg: "Profile Picture changed!"}
+  
+      }
 
     @UseGuards(IsProviderAuthenticated)
     @Get('me')

@@ -60,6 +60,9 @@ export class AddProductNameDTO{
     @IsNotEmpty()
     unitPrice: string;
 }
+export class ChangeCompanyPropicDTO{
+    
+}
 export class ChangeCompanyInfoDTO{
     @IsOptional()
     @IsString()
