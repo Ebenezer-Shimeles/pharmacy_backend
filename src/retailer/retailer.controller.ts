@@ -48,6 +48,8 @@ export class RetailerController {
        //This is used for outside the app
        // if there is a veification code and a new Password it acts to change the password
        // else it will send a verification code to the phone number
+       if(!await this.retailerService.findByPhoneNumber(input.phoneNumber))
+           throw new BadRequestException({error: 'Account does not exist'})     
        if(input.password && input.verificationCode && input.phoneNumber){
            if( await this.retailerService.changePasswordUsingCode(input)){
                return {msg: "Password changed"}
@@ -65,7 +67,7 @@ export class RetailerController {
        }
        
        
-       throw new BadRequestException({error: "Bad Request"})
+      
 
    }
 

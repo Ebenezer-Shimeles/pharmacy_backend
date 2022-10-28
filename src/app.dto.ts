@@ -51,6 +51,16 @@ export  class CompanyInputDTO{
 
 
 }
+export class AdminForgottenPasswordDTO{
+    @IsOptional()
+    verificationCode?: number | string
+
+    @IsNotEmpty()
+    email: string;
+    
+    @IsOptional()
+    password?: string;
+}
 export class AdminInputDTO{
     @IsNotEmpty()
     email: string;

@@ -50,6 +50,9 @@ export class ProviderController {
         //This is used for outside the app
         // if there is a veification code and a new Password it acts to change the password
         // else it will send a verification code to the phone number
+        if(!await this.providerService.findByPhoneNumber(input.phoneNumber))
+             throw new BadRequestException({error: 'Account does not exist'})     
+
         if(input.password && input.verificationCode && input.phoneNumber){
             if( await this.providerService.changePasswordUsingCode(input)){
                 return {msg: "Password changed"}

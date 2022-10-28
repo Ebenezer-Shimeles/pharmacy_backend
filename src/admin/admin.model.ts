@@ -10,6 +10,9 @@ export class Admin extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({name: 'verification_code', nullable: true})
+    verificationCode: string;
+
     @Column({length: 25, name: 'first_name'})
     firstName: string;
    

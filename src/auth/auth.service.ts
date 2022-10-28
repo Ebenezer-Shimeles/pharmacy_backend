@@ -23,8 +23,8 @@ export class AuthService {
         const admin = await this.adminService.getByEmail(email);
       //  console.log('validating...')
       Logger.log(JSON.stringify(admin), 'Admin=>')
-       if(admin && admin.password == password) return admin;
-       return admin;
+       if(admin && await bc.compare(password, admin.password)  ) return admin;
+       return false;
 
     }
 
