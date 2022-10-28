@@ -1,3 +1,4 @@
+import { Provider } from "src/provider/provider.model";
 import { Column, PrimaryGeneratedColumn, CreateDateColumn, Entity, BaseEntity, ManyToOne } from "typeorm";
 import { Category } from "./category.model";
 import { Product } from "./product.model";
@@ -5,12 +6,12 @@ import { Product } from "./product.model";
 
 
 @Entity()
-export class ProductEntry{
+export class ProductEntry extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({name: 'expiry_date'})
-    expiryDate: Date;
+    expiryDate: string; //unix epoch time
     
     @ManyToOne(type=>Product)
     forProduct: Product
@@ -31,7 +32,9 @@ export class ProductEntry{
     
     @Column({length: 255})
     remark: string;
-
+    
+    @ManyToOne(type=>Provider, provider => provider.products)
+    addedBy: Provider
   
 
     

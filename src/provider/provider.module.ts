@@ -10,6 +10,6 @@ import { MessagingService } from 'src/messaging/messaging.service';
 @Module({
   providers: [ProviderService, JwtService, ConfigService, MessagingService],
   controllers: [ProviderController,],
-  imports: [JwtModule, ConfigModule, MessagingModule]
+  imports: [JwtModule, ConfigModule, MessagingModule, ProviderModule]
 })
 export class ProviderModule {}

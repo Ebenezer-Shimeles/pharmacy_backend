@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , BadRequestException, Patch} from '@nestjs/common';
-import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto } from 'src/app.dto';
+import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , BadRequestException, Patch, Param} from '@nestjs/common';
+import { request } from 'http';
+import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,AddProductInputDTO, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto } from 'src/app.dto';
 import { IsCompanyVerified, IsProviderAuthenticated } from 'src/company.strategy';
 import { Query } from 'typeorm/driver/Query';
 
@@ -85,4 +86,24 @@ export class ProviderController {
         }
 
     }
+
+    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+    @Post('products')
+    async addProduct(@Request() request,  @Body() input: AddProductInputDTO){
+         const result = await this.providerService.addProductEntry( request?.user?.id, input);
+         if(!result)
+            throw new BadRequestException({error: "Bad date format given!"
+            })
+        return {
+            msg: 'Added Product',
+            data: result
+        }
+    }
+   
+    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+    @Get('products')
+    async getProducts(@Request() req){
+         return { data: await this.providerService.getProductEntriesof(req?.user?.id), msg: 'ok'}
+    }
+
 }

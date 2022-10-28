@@ -2,16 +2,18 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bc from 'bcrypt';
 import { TwilioService } from 'nestjs-twilio';
-import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, CompanyInputDTO, VerifyCompanyDto } from 'src/app.dto';
+import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, AddProductInputDTO, CompanyInputDTO, VerifyCompanyDto } from 'src/app.dto';
 import * as twilio from 'twilio'
 import {} from 'twilio'
 import { Provider } from './provider.model';
 import {generateVerficationCode} from 'src/utils'
 import { MessagingService } from 'src/messaging/messaging.service';
+import { ProductEntry } from 'src/product/product.entry.model';
+import { Product } from 'src/product/product.model';
 
 @Injectable()
 export class ProviderService {
-    constructor(private configService: ConfigService, private msgService: MessagingService){}    
+    constructor(private configService: ConfigService, private msgService: MessagingService,){}    
 
     async findByPhoneNumber(phoneNumber: string) : Promise<Provider | null>{
         return await Provider.findOneBy({phoneNumber})
@@ -75,5 +77,36 @@ export class ProviderService {
           provider.verificationCode = String(generateVerficationCode());
           await provider.save()
           return provider
+    }
+
+    async addProductEntry(userId: number, input: AddProductInputDTO ): Promise<ProductEntry | null>{
+         //this finds the product first and adds the product name
+        const entry = new ProductEntry()
+        const adder = await Provider.findOneBy({id:  userId});
+        const product = await Product.findOneBy({id: input.forProductId})
+        entry.addedBy = adder;
+        entry.forProduct  = product;
+        entry.batchNumber = input.batchNumber;
+        try{
+            entry.expiryDate = Date.parse(input.expiryDate) + "";
+        }catch(e){
+            return null;
+        }
+        entry.remark = input.remark;
+        entry.units = input.units
+        entry.unitPrice = input.unitPrice;
+
+        await entry.save();
+
+        return entry;
+    }
+    async addProductUsingNewName(){
+
+    }
+    async getProductEntriesof(id: number): Promise<ProductEntry[] | null>{
+       // const user = await Provider.findOneBy({id})
+        const entries = await ProductEntry.findBy({addedBy:{id}})
+
+        return entries
     }
 }
