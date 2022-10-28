@@ -1,7 +1,8 @@
 
 
-import { IsNotEmpty, IsOptional, IsNumber } from "class-validator";
+import { IsNotEmpty, IsOptional, IsNumber, IsString } from "class-validator";
 import {} from 'class-transformer'
+import { ProductCategory } from "./product/product.model";
 
 
 export  class CompanyOutputDTO{
@@ -51,6 +52,14 @@ export  class CompanyInputDTO{
 
 
 }
+export class AddProductNameDTO{
+    @IsNotEmpty()
+    name: string;
+    @IsNotEmpty()
+    category: ProductCategory;
+    @IsNotEmpty()
+    unitPrice: string;
+}
 export class AdminForgottenPasswordDTO{
     @IsOptional()
     verificationCode?: number | string
@@ -60,6 +69,34 @@ export class AdminForgottenPasswordDTO{
     
     @IsOptional()
     password?: string;
+}
+export class AddProductInputDTO{
+    @IsNotEmpty()
+    @IsNumber()
+    forProductId: number;
+    
+    @IsNotEmpty()
+    @IsString()
+    expiryDate: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    unitPrice: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    batchNumber: number;
+    
+
+    @IsNotEmpty()
+    @IsNumber()
+    units: number;
+
+    @IsString()
+    @IsNotEmpty()
+    remark: string;
+
+
 }
 export class AdminInputDTO{
     @IsNotEmpty()
