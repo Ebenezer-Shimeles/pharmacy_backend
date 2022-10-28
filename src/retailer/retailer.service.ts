@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException,Logger  } from '@nestjs/common';
 import { Retailer } from './retailer.model';
 import * as bc from 'bcrypt';
-import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, VerifyCompanyDto } from 'src/app.dto';
+import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,ChangeCompanyInfoDTO,  VerifyCompanyDto } from 'src/app.dto';
 import {generateVerficationCode} from 'src/utils';
 import { CompanyInputDTO } from 'src/app.dto';
 
@@ -9,6 +9,14 @@ import { CompanyInputDTO } from 'src/app.dto';
 export class RetailerService {
   async findByPhoneNumber(phoneNumber: string) : Promise<Retailer | null>{
     return await Retailer.findOneBy({phoneNumber})
+}
+async changeInfo(user:Retailer , input: ChangeCompanyInfoDTO){
+  if(input.bankAccount) user.bankAccount = input.bankAccount;
+  if(input.name) user.name = input.name;
+ // if(input.phoneNumber) user.phoneNumber = input.phoneNumber;
+  if(input.tinNumber) user.tinNumber = input.tinNumber;
+
+  await user.save();
 }
 async changePassword(user: Retailer, input: ChangePasswordFromInsideInput) : Promise<boolean>{
   const userInfo = await this.findByPhoneNumber(user.phoneNumber)

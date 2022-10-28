@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bc from 'bcrypt';
 import { TwilioService } from 'nestjs-twilio';
-import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, AddProductInputDTO, CompanyInputDTO, VerifyCompanyDto } from 'src/app.dto';
+import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, AddProductInputDTO, CompanyInputDTO, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import * as twilio from 'twilio'
 import {} from 'twilio'
 import { Provider } from './provider.model';
@@ -57,6 +57,14 @@ export class ProviderService {
         provider.verificationCode = null;
         await provider.save();
         return true;
+    }
+    async changeInfo(user:Provider , input: ChangeCompanyInfoDTO){
+          if(input.bankAccount) user.bankAccount = input.bankAccount;
+          if(input.name) user.name = input.name;
+         // if(input.phoneNumber) user.phoneNumber = input.phoneNumber;
+          if(input.tinNumber) user.tinNumber = input.tinNumber;
+
+          await user.save();
     }
     async create(input: CompanyInputDTO) : Promise<Provider | null>{
           if(await Provider.findOneBy({phoneNumber: input.phoneNumber}) ){

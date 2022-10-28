@@ -60,6 +60,19 @@ export class AddProductNameDTO{
     @IsNotEmpty()
     unitPrice: string;
 }
+export class ChangeCompanyInfoDTO{
+    @IsOptional()
+    @IsString()
+    name: string;
+    @IsOptional()
+    @IsString()
+    tinNumber: string;
+
+
+    @IsOptional()
+     @IsString()
+    bankAccount: string;
+}
 export class AdminForgottenPasswordDTO{
     @IsOptional()
     verificationCode?: number | string
@@ -131,6 +144,13 @@ export class ChangePasswordFromInsideInput{
     @IsNotEmpty()
     newPassword: string;
 }
+export class AddProductEntryDTO{
+    
+    forProductId: number;
+    
+
+}
+
 export class AddProductDTO{
     @IsNotEmpty()
     

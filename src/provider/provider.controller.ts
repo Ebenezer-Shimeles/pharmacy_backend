@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , BadRequestException, Patch, Param} from '@nestjs/common';
 import { request } from 'http';
-import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,AddProductInputDTO, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto } from 'src/app.dto';
+import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,AddProductInputDTO, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import { IsCompanyVerified, IsProviderAuthenticated } from 'src/company.strategy';
 import { Query } from 'typeorm/driver/Query';
 
@@ -9,7 +9,12 @@ import { ProviderService } from './provider.service';
 @Controller('providers')
 export class ProviderController {
     constructor(private providerService: ProviderService){}
-
+    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+    @Patch('me') //update account Info Except profilepicture and password
+    async changeProfileInfo(@Request() request, @Body() input: ChangeCompanyInfoDTO){
+         await this.providerService.changeInfo(request.user, input);
+         return {msg: "Changed!"}
+    }
 
     @UseGuards(IsProviderAuthenticated)
     @Get('me')

@@ -1,5 +1,5 @@
 import { Controller, Post,Body, Get, UseGuards, Request, Logger, BadRequestException, Patch } from '@nestjs/common';
-import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, VerifyCompanyDto } from 'src/app.dto';
+import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import { IsCompanyVerified } from 'src/company.strategy';
 import { CompanyInputDTO, CompanyOutputDTO } from 'src/app.dto';
 import { IsRetailerAuthenticated } from 'src/company.strategy';
@@ -12,6 +12,13 @@ export class RetailerController {
     @Get('me')
     async getRetailer(@Request() request){
         return request.user;
+    }
+
+    @UseGuards(IsRetailerAuthenticated)
+    @Patch('me') //update account Info Except profilepicture and password
+    async changeProfileInfo(@Request() request, @Body() input: ChangeCompanyInfoDTO){
+         await this.retailerService.changeInfo(request.user, input);
+         return {msg: "Changed!"}
     }
    
     @Post()
