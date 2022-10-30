@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , Query, BadRequestException, Patch, Param, UseInterceptors, UploadedFile} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , Query, BadRequestException, Patch, Param, UseInterceptors, UploadedFile, Delete} from '@nestjs/common';
 import { request } from 'http';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,AddProductInputDTO, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
@@ -13,6 +13,30 @@ import { Provider } from './provider.model';
 @Controller('providers')
 export class ProviderController {
     constructor(private providerService: ProviderService){}
+     
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post(":id/approval")
+    async approveProvider(@Param('id') id:number){
+        if(!Number.isInteger(id))
+            throw new BadRequestException({error: "Error id is not valid"})
+        if(!await this.providerService.verifyUser(id))
+             throw new BadRequestException({error: "Use cannot be verified because it does not exist"})
+        return {msg: 'verified'}
+    }
+
+
+    @UseGuards(AuthGuard('jwt'))
+    @Delete(":id/approval")
+    async removeProviderApprover(@Param('id') id:number){
+        if(!Number.isInteger(id))
+           throw new BadRequestException({error: "Error id is not valid"})
+        if(!await this.providerService.removeUserVerification(id))
+          throw new BadRequestException({error: "User does not exist"})
+        return {msg: 'verification deleted'}
+    }
+
+    
 
     @UseGuards(IsProviderAuthenticated)
     @Get('me')

@@ -1,4 +1,4 @@
-import { Controller, Post,Body, Get, UseGuards, Request, Logger, BadRequestException, Patch,UseInterceptors , UploadedFile} from '@nestjs/common';
+import { Controller, Post,Body, Get, UseGuards, Request, Logger, BadRequestException, Patch,UseInterceptors , UploadedFile, Query, Param} from '@nestjs/common';
 import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IsCompanyVerified } from 'src/company.strategy';
@@ -6,6 +6,7 @@ import { CompanyInputDTO, CompanyOutputDTO } from 'src/app.dto';
 import { IsRetailerAuthenticated } from 'src/company.strategy';
 import { RetailerService } from './retailer.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Retailer } from './retailer.model';
 
 @Controller('retailers')
 export class RetailerController {
@@ -18,14 +19,47 @@ export class RetailerController {
     
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
-    async getRetailerInfo(){
-        
+    async getRetailerInfo(@Param('id') id: number){
+        if(!Number.isInteger(id))
+        throw new BadRequestException({error: "Error id is not valid"})
+        const retailer = await Retailer.findOne({where:{id}, relations: ['transactions']})
+        if(!retailer) throw new BadRequestException({error: "Error retailer unknown!"})
+        delete retailer.password
+        return retailer
     }
 
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    async getAllRetailers(){
-
+    async getAllRetailers(@Query() query){
+        let searchTerm = ''
+        let limit = 10
+        let page = 0
+        if(query['searchTerm']) searchTerm = searchTerm 
+        if(query['limit'])
+            try{
+                limit = Number.parseInt(query['limit'])
+            }catch(e){
+                throw new BadRequestException({error: "Bad number format given!"})
+            }
+        if(query['page'])
+            try{
+                page = Number.parseInt(query['page'])
+            }catch(e){
+                throw new BadRequestException({error: "Bad number format given!"})
+            }
+        if(searchTerm) searchTerm = `%${searchTerm}%`
+        let retailers= await Retailer.createQueryBuilder()
+                        .select('*')
+                                
+                        .where('tin_number like :searchTerm or name like :searchTerm or bank_account like :searchTerm',
+                        {searchTerm}
+                        )
+                        .skip(limit*page)
+                        .limit(limit)
+                        
+                        .getRawMany();
+        retailers = retailers.map(provider => { delete provider.password; return provider})
+        return retailers
     }
 
 

@@ -111,6 +111,24 @@ export class ProviderService {
     async addProductUsingNewName(){
 
     }
+
+    async removeUserVerification(id: number): Promise<boolean>{
+        const provider = await Provider.findOneBy({id});
+        if(!provider) return false;
+        provider.isVerifiedAdmin = false;
+        await provider.save();
+        return false;
+    }
+
+    async verifyUser(id: number): Promise<boolean>{
+        const provider = await Provider.findOneBy({id});
+        Logger.log( `Provider ${JSON.stringify(provider)}`)
+        if(!provider) return false;
+        provider.isVerifiedAdmin = true;
+        await provider.save();
+        return true;
+
+    }
     async getProductEntriesof(id: number): Promise<ProductEntry[] | null>{
        // const user = await Provider.findOneBy({id})
         const entries = await ProductEntry.findBy({addedBy:{id}})
