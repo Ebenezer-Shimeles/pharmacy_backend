@@ -58,6 +58,24 @@ async verify(pro: Retailer, input: VerifyCompanyDto): Promise<boolean>{
   await retailer.save();
   return true;
 }
+
+async removeUserVerification(id: number): Promise<boolean>{
+  const retailer = await Retailer.findOneBy({id});
+  if(!retailer) return false;
+  retailer.isVerifiedAdmin = false;
+  await retailer.save();
+  return true;
+}
+
+async verifyUser(id: number): Promise<boolean>{
+  const retailer = await Retailer.findOneBy({id});
+  Logger.log( `retailer ${JSON.stringify(retailer)}`)
+  if(!retailer) return false;
+  retailer.isVerifiedAdmin = true;
+  await retailer.save();
+  return true;
+
+}
     async create(input: CompanyInputDTO) : Promise<Retailer>{
         if(await Retailer.findOneBy({phoneNumber: input.phoneNumber}) ){
           throw new BadRequestException({error: "There is an asscoiated account with this phone number"})

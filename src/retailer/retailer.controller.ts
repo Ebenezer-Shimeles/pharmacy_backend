@@ -1,4 +1,4 @@
-import { Controller, Post,Body, Get, UseGuards, Request, Logger, BadRequestException, Patch,UseInterceptors , UploadedFile, Query, Param} from '@nestjs/common';
+import { Controller, Post,Body, Get, UseGuards, Request, Logger, BadRequestException, Patch,UseInterceptors , UploadedFile,Delete, Query, Param} from '@nestjs/common';
 import { ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IsCompanyVerified } from 'src/company.strategy';
@@ -17,6 +17,29 @@ export class RetailerController {
         return request.user;
     }
     
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post(":id/approval")
+    async approveProvider(@Param('id') id:number){
+        if(!Number.isInteger(id))
+            throw new BadRequestException({error: "Error id is not valid"})
+        if(!await this.retailerService.verifyUser(id))
+             throw new BadRequestException({error: "Use cannot be verified because it does not exist"})
+        return {msg: 'verified'}
+    }
+
+
+    @UseGuards(AuthGuard('jwt'))
+    @Delete(":id/approval")
+    async removeProviderApprover(@Param('id') id:number){
+        if(!Number.isInteger(id))
+           throw new BadRequestException({error: "Error id is not valid"})
+        if(!await this.retailerService.removeUserVerification(id))
+          throw new BadRequestException({error: "User does not exist"})
+        return {msg: 'verification deleted'}
+    }
+
+
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
     async getRetailerInfo(@Param('id') id: number){

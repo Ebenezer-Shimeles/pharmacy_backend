@@ -117,7 +117,7 @@ export class ProviderService {
         if(!provider) return false;
         provider.isVerifiedAdmin = false;
         await provider.save();
-        return false;
+        return true;
     }
 
     async verifyUser(id: number): Promise<boolean>{
