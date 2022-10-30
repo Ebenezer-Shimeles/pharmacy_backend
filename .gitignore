@@ -131,6 +131,8 @@ artifacts/
 # Chutzpah Test files
 _Chutzpah*
 
+files\*.*
+files\**
 # Visual C++ cache files
 ipch/
 *.aps
