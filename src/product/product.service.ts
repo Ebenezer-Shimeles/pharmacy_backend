@@ -5,7 +5,7 @@ import { Product } from './product.model';
 export class ProductService {
 
        constructor(){}
-
+      
        async getProductById(id: number): Promise<Product>{
            return await Product.findOneBy({id})
        }

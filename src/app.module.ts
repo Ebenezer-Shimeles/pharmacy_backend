@@ -38,6 +38,7 @@ import { MessagingModule } from './messaging/messaging.module';
       database: process.env.DATABASE_NAME,
       entities: [Permission, Admin, Category, Product, Promo, Provider, Retailer, ProductEntry, CartEntry, RetailerTransaction],
       synchronize: true,
+      logging: true
     }),
   
     ProductModule,

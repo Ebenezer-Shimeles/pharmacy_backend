@@ -9,5 +9,5 @@ import { Entity, OneToMany } from "typeorm";
 export class Provider extends Company{
     
     @OneToMany(type=>ProductEntry, entry=>entry.addedBy)
-    products: ProductEntry
+    products: ProductEntry[]
 }

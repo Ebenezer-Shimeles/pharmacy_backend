@@ -61,7 +61,7 @@ export class AddProductNameDTO{
     unitPrice: string;
 }
 export class ChangeCompanyPropicDTO{
-    
+
 }
 export class ChangeCompanyInfoDTO{
     @IsOptional()
@@ -101,7 +101,7 @@ export class AddProductInputDTO{
 
     @IsNotEmpty()
     @IsNumber()
-    batchNumber: number;
+    batchNumber: string;
     
 
     @IsNotEmpty()
