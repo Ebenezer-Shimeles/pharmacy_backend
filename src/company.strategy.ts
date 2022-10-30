@@ -24,6 +24,7 @@ export class IsProviderAuthenticated  implements CanActivate{
         const token = authorization.split('Bearer').find(str => str.trim() != '')
 
         if(!token) return false;
+        Logger.log(`Got token ${token}`)
         
         const secret = this.configService.get('JWT_SECRET_PROVIDER')
         try{

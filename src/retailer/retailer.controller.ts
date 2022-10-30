@@ -5,6 +5,7 @@ import { IsCompanyVerified } from 'src/company.strategy';
 import { CompanyInputDTO, CompanyOutputDTO } from 'src/app.dto';
 import { IsRetailerAuthenticated } from 'src/company.strategy';
 import { RetailerService } from './retailer.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('retailers')
 export class RetailerController {
@@ -14,13 +15,27 @@ export class RetailerController {
     async getRetailer(@Request() request){
         return request.user;
     }
+    
+    @UseGuards(AuthGuard('jwt'))
+    @Get(':id')
+    async getRetailerInfo(){
+        
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get()
+    async getAllRetailers(){
+
+    }
+
+
     @UseGuards(IsRetailerAuthenticated)
   //  @UseInterceptors(FileInterceptor('file'))
     @Post('me/picture')
     @UseInterceptors(FileInterceptor('file'))
    async changeProPic(@UploadedFile() file: Express.Multer.File, @Request() request) {
        if(!file) throw new BadRequestException({error: "No files found!"})
-
+       
        const retailer = await this.retailerService.findByPhoneNumber(request.user.phoneNumber);
        retailer.picLocation = file.filename;
        retailer.save();

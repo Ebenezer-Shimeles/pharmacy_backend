@@ -6,35 +6,54 @@ import { IsCompanyVerified, IsProviderAuthenticated } from 'src/company.strategy
 import { Query } from 'typeorm/driver/Query';
 
 import { ProviderService } from './provider.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('providers')
 export class ProviderController {
     constructor(private providerService: ProviderService){}
-    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
-    @Patch('me') //update account Info Except profilepicture and password
-    async changeProfileInfo(@Request() request, @Body() input: ChangeCompanyInfoDTO){
-         await this.providerService.changeInfo(request.user, input);
-         return {msg: "Changed!"}
-    }
-    @UseGuards(IsProviderAuthenticated)
-    //  @UseInterceptors(FileInterceptor('file'))
-      @Post('me/picture')
-      @UseInterceptors(FileInterceptor('file'))
-     async changeProPic(@UploadedFile() file: Express.Multer.File, @Request() request) {
-         if(!file) throw new BadRequestException({error: "No files found!"})
-  
-         const provider = await this.providerService.findByPhoneNumber(request.user.phoneNumber);
-         provider.picLocation = file.filename;
-         await provider.save();
-         return {msg: "Profile Picture changed!", data: provider}
-  
-      }
 
     @UseGuards(IsProviderAuthenticated)
     @Get('me')
     async getProvider(@Request() request){
         return request.user;
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    async getAllProviders(){
+
+    }
+      
+    @UseGuards(AuthGuard('jwt'))
+    @Get(':id')
+    async getProviderInfo(){
+        
+    }
+
+    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+    @Patch('me') //update account Info Except profilepicture and password
+    async changeProfileInfo(@Request() request, @Body() input: ChangeCompanyInfoDTO){
+         await this.providerService.changeInfo(request.user, input);
+         return {msg: "Changed!"}
+    }
+    editFileName(){
+
+    }
+    @UseGuards(IsProviderAuthenticated)
+    //  @UseInterceptors(FileInterceptor('file'))
+      @Patch('me/picture')
+      @UseInterceptors(FileInterceptor('file'))
+     async changeProPic(@UploadedFile() file: Express.Multer.File, @Request() request) {
+         if(!file) throw new BadRequestException({error: "No files found!"})
+         console.log('upload')
+         console.log(`Got File ${file.originalname} as ${file.filename}`, 'Test')
+         const provider = await this.providerService.findByPhoneNumber(request.user.phoneNumber);
+         provider.picLocation = file.filename;
+         await provider.save();
+         return {msg: "Profile Picture changed!"}
+  
+      }
+
+   
     @Post()
     async addProvider(@Body() company: CompanyInputDTO): Promise<null | CompanyOutputDTO>{
          const output = new CompanyOutputDTO();
@@ -126,3 +145,4 @@ export class ProviderController {
     }
 
 }
+  
