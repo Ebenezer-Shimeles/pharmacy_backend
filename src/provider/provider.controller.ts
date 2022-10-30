@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , BadRequestException, Patch, Param, UseInterceptors, UploadedFile} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Request, Logger, Bind , Query, BadRequestException, Patch, Param, UseInterceptors, UploadedFile} from '@nestjs/common';
 import { request } from 'http';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import {  ChangePasswordFromInsideInput, ChangePasswordFromOutsideInput,AddProductInputDTO, CompanyInputDTO, CompanyOutputDTO, VerifyCompanyDto, ChangeCompanyInfoDTO } from 'src/app.dto';
 import { IsCompanyVerified, IsProviderAuthenticated } from 'src/company.strategy';
-import { Query } from 'typeorm/driver/Query';
+
 
 import { ProviderService } from './provider.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Provider } from './provider.model';
+
 
 @Controller('providers')
 export class ProviderController {
@@ -19,14 +21,48 @@ export class ProviderController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    async getAllProviders(){
+    @Get()
+    async getAllProviders(@Query() query){
+        let searchTerm = ''
+        let limit = 10
+        let page = 0
+        if(query['searchTerm']) searchTerm = searchTerm 
+        if(query['limit'])
+            try{
+                limit = Number.parseInt(query['limit'])
+            }catch(e){
+                throw new BadRequestException({error: "Bad number format given!"})
+            }
+        if(query['page'])
+            try{
+                page = Number.parseInt(query['page'])
+            }catch(e){
+                throw new BadRequestException({error: "Bad number format given!"})
+            }
+        if(searchTerm) searchTerm = `%${searchTerm}%`
+        let providers = await Provider.createQueryBuilder()
+                .select('*')
+                
+                .where('tin_number like :searchTerm or name like :searchTerm or bank_account like :searchTerm',
+                   {searchTerm}
+                )
+                .limit(limit)
+                .skip(limit*page)
+                .getRawMany();
+        providers = providers.map(provider => { delete provider.password; return provider})
+        return providers
 
     }
       
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
-    async getProviderInfo(){
-        
+    async getProviderInfo(@Param('id') id:number){
+        if(!Number.isInteger(id))
+            throw new BadRequestException({error: "Error id is not valid"})
+        const provider = await Provider.findOne({where:{id}, relations: ['products']})
+        if(!provider) throw new BadRequestException({error: "Error provider unknown!"})
+        delete provider.password
+        return provider
     }
 
     @UseGuards(IsProviderAuthenticated, IsCompanyVerified)

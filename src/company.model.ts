@@ -21,7 +21,7 @@ export abstract class  Company extends BaseEntity{
     @Column({length: 10, name: 'verification_code', nullable: true})
     verificationCode: string;
 
-    @Column()
+    @Column({name: 'tin_number'})
     tinNumber: string;
 
     @Column({length: 15, name: 'phone_number', unique: true})
