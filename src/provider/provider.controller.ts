@@ -23,10 +23,10 @@ export class ProviderController {
      async changeProPic(@UploadedFile() file: Express.Multer.File, @Request() request) {
          if(!file) throw new BadRequestException({error: "No files found!"})
   
-         const retailer = await this.providerService.findByPhoneNumber(request.user.phoneNumber);
-         retailer.picLocation = file.filename;
-         retailer.save();
-         return {msg: "Profile Picture changed!"}
+         const provider = await this.providerService.findByPhoneNumber(request.user.phoneNumber);
+         provider.picLocation = file.filename;
+         await provider.save();
+         return {msg: "Profile Picture changed!", data: provider}
   
       }
 

@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToMany, CreateDateColumn } from "typeorm";
 import { Category } from "./category.model";
 import { ProductEntry } from "./product.entry.model";
 
@@ -30,7 +30,8 @@ export class Product extends BaseEntity{
     @Column({name: 'unit_price', nullable: false})
     unitPrice: string;
     
-   
+    @CreateDateColumn({name: 'added_at'})
+    addedAt: Date;
 
 
 
