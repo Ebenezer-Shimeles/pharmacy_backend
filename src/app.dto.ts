@@ -86,6 +86,19 @@ export class AdminForgottenPasswordDTO{
     @IsOptional()
     password?: string;
 }
+
+
+export class AddPromoInputDTO{
+    @IsNotEmpty()
+    @IsString()
+    title: string;
+
+
+    @IsNotEmpty()
+    @IsString()
+    msg: string;
+}
+
 export class AddToCartInputDTO{
     @IsNotEmpty()
     @IsNumber()

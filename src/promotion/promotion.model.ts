@@ -17,7 +17,7 @@ export class Promo extends BaseEntity{
     @Column()
     news: string;
     
-    @Column({name: 'pic_url'})
+    @Column({name: 'pic_url', default: ''})
     picUrl: string;
 
     
