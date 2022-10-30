@@ -45,7 +45,17 @@ export class ProductController {
         return {data: productLikes.getRawMany(), msg: 'ok'};
 
     }
-    
+    @Get('entries/:id')
+    async getEntryInfo(
+        @Param('id') id: number
+    ){
+        if(!Number.isInteger(id))
+            throw new BadRequestException({error: "Id parameter must be a number"})
+        const entry = await ProductEntry.findOneBy({id})
+
+        return {data: entry, msg: 'ok'}
+    }
+
     @Get(':id/entries')
     async getProductEntries(
         @Param('id') id: number,
