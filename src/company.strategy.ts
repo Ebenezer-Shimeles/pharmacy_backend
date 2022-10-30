@@ -105,3 +105,21 @@ export class IsCompanyVerified implements CanActivate{
           else return true;
       }
 }
+
+@Injectable()
+export class IsCompanyAdminVerified implements CanActivate{
+      canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+          const request = context.switchToHttp().getRequest()
+           
+          if(!request.user){ 
+             Logger.log('user not found in request', 'IsCompanyVerified')
+            return false;
+          }
+
+          if(!request.user.isVerifiedAdmin){
+              Logger.log('user not verified', 'IsCompanyVerified')
+              return false;
+          }
+          else return true;
+      }
+}
