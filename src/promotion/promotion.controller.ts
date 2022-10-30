@@ -1,13 +1,19 @@
-import { Controller, Delete, Post, UploadedFile, UseGuards, UseInterceptors, Request, BadRequestException, HttpCode, Param } from '@nestjs/common';
+import { Controller, Delete, Post, UploadedFile, UseGuards, UseInterceptors, Request, BadRequestException, HttpCode, Param, Get, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPromoInputDTO } from 'src/app.dto';
+import { Promo } from './promotion.model';
 import { PromotionService } from './promotion.service';
 
-@Controller('promotion')
+@Controller('promotions')
 export class PromotionController {
 
     constructor(private promoService: PromotionService){}
+    @UseGuards(AuthGuard('jwt'))
+    @Get()
+    async getAll(){
+        return {msg: 'ok', data: await Promo.find()}
+    }
 
     @UseGuards(AuthGuard('jwt'))
     @Post(':id/picture')
@@ -26,7 +32,7 @@ export class PromotionController {
 
     @UseGuards(AuthGuard('jwt'))
     @Post()
-    async addPost(@Request() request, input: AddPromoInputDTO){
+    async addPost(@Request() request, @Body() input: AddPromoInputDTO){
         return {data: await this.promoService.addPromotion(input.title, input.msg), msg: 'ok'}
     }
 
