@@ -4,6 +4,9 @@ import { Logger } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { CompanyAuthInputDTO } from 'src/app.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
     

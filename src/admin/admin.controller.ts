@@ -6,11 +6,15 @@ import { BadRequestException } from '@nestjs/common';
 import { AdminForgottenPasswordDTO, AdminInputDTO, AdminOutputDTO } from 'src/app.dto';
 import { TwilioService } from 'nestjs-twilio';
 import { FileLogger } from 'typeorm';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Admin')
 @Controller('admins')
 export class AdminController {
      
         constructor(private adminService: AdminService, ){}
+
+        @ApiBearerAuth('admin')
         @UseGuards(AuthGuard('jwt'))
         @Get('me')
         async getProfile(@Request() req){

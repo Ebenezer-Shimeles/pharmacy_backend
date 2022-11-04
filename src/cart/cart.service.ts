@@ -19,6 +19,19 @@ export class CartService {
        return true;
 
     }
+    async removeFromCart(userId: number, entryId: number){
+        const entry = await CartEntry.findBy(
+            {
+                id: entryId,
+                retailer:{
+                    id: userId
+                }
+            }
+        );
+        if(!entry) return false;
+        return true;
+    }
+      
 
     async getEntriesOf(userId: number){
          

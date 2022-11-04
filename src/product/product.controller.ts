@@ -1,5 +1,6 @@
 import { Controller, Post, UseGuards, Request, Body, Get , BadRequestException, Query, Param} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { query } from 'express';
 import { get } from 'http';
 import { of } from 'rxjs';
@@ -9,7 +10,9 @@ import {  } from 'typeorm/driver/Query';
 import { ProductEntry } from './product.entry.model';
 import { Product } from './product.model';
 import { ProductService } from './product.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiTags('Product')
 @Controller('products')
 export class ProductController {
 
@@ -35,14 +38,9 @@ export class ProductController {
         if(query['limit']) limit = Number(query['limit'])
         searchTerm = `%${searchTerm}%`;
 
-        const productLikes = Product.createQueryBuilder()
-                             .select('*')
-                             .where('name like :searchTerm or category like :searchTerm', {searchTerm})
-                             .limit(limit)
-                             .orderBy('added_at');
-        
+        const productLikes = await Product.find()
 
-        return {data: productLikes.getRawMany(), msg: 'ok'};
+        return {data: productLikes, msg: 'ok'};
 
     }
     @Get('entries/:id')
@@ -97,7 +95,8 @@ export class ProductController {
         return {data: product, msg: 'ok'}
     }
 
-
+    @ApiOperation({summary: 'This is used to add a product type that has a unique name.'})
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Post() //This is to add a new product type
     async addProductType(@Body() input: AddProductNameDTO){

@@ -8,13 +8,16 @@ import { IsCompanyVerified, IsProviderAuthenticated } from 'src/company.strategy
 import { ProviderService } from './provider.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Provider } from './provider.model';
+import { ApiTags, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-
+@ApiTags('Providers\\Supplier')
 @Controller('providers')
 export class ProviderController {
     constructor(private providerService: ProviderService){}
      
-
+    @ApiOperation({summary: 'This is called by the admin to verify the companies'})
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Post(":id/approval")
     async approveProvider(@Param('id') id:number){
@@ -26,6 +29,9 @@ export class ProviderController {
     }
 
 
+
+    @ApiOperation({summary: 'Remove verification used by the admin'})
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Delete(":id/approval")
     async removeProviderApprover(@Param('id') id:number){
@@ -38,12 +44,14 @@ export class ProviderController {
 
     
 
+    @ApiBearerAuth('provider')
     @UseGuards(IsProviderAuthenticated)
     @Get('me')
     async getProvider(@Request() request){
         return request.user;
     }
 
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Get()
     async getAllProviders(@Query() query){
@@ -77,7 +85,8 @@ export class ProviderController {
         return providers
 
     }
-      
+    
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
     async getProviderInfo(@Param('id') id:number){
@@ -89,7 +98,8 @@ export class ProviderController {
         return provider
     }
 
-    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+    @ApiBearerAuth('provider')
+    @UseGuards(IsProviderAuthenticated,)//)// IsCompanyVerified)
     @Patch('me') //update account Info Except profilepicture and password
     async changeProfileInfo(@Request() request, @Body() input: ChangeCompanyInfoDTO){
          await this.providerService.changeInfo(request.user, input);
@@ -98,6 +108,9 @@ export class ProviderController {
     editFileName(){
 
     }
+
+    @ApiBearerAuth('provider')
+    @ApiConsumes('multipart/form-data')
     @UseGuards(IsProviderAuthenticated)
     //  @UseInterceptors(FileInterceptor('file'))
       @Patch('me/picture')
@@ -130,13 +143,17 @@ export class ProviderController {
 
     }
 
-    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+
+    @ApiBearerAuth('provider')
+    @UseGuards(IsProviderAuthenticated,)// IsCompanyVerified)
     @Get('test')
     async test(@Request() request){
         return request.user;
     }
     
-    @UseGuards(IsProviderAuthenticated, IsCompanyVerified,)
+    @ApiOperation({summary: 'Thiss is used when the user is insid the app'})
+    @ApiBearerAuth('provider')
+    @UseGuards(IsProviderAuthenticated,)// IsCompanyVerified,)
     @Patch('password') //this is to change the password from inside the app
     async changePasswordFromInsideTheApp(@Request() request, @Body() input: ChangePasswordFromInsideInput){
          if(!await this.providerService.changePassword(request.user, input))
@@ -173,8 +190,10 @@ export class ProviderController {
 
     }
 
+    @ApiBearerAuth('provider')
     @UseGuards(IsProviderAuthenticated)
     @Post('verification')
+    @ApiOperation({summary: 'This is used to verify using code sent to phon. Since twilio is not working see the code from the db'})
     async verify(@Request() request, @Body() input: VerifyCompanyDto){
          Logger.log({input}, 'Test')
          if(!await this.providerService.verify(request.user, input))
@@ -185,7 +204,8 @@ export class ProviderController {
 
     }
 
-    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+    @ApiBearerAuth('provider')
+    @UseGuards(IsProviderAuthenticated, )//IsCompanyVerified)
     @Post('products')
     async addProduct(@Request() request,  @Body() input: AddProductInputDTO){
          const result = await this.providerService.addProductEntry( request?.user?.id, input);
@@ -197,8 +217,9 @@ export class ProviderController {
             data: result
         }
     }
-   
-    @UseGuards(IsProviderAuthenticated, IsCompanyVerified)
+  
+    @ApiBearerAuth('provider')
+    @UseGuards(IsProviderAuthenticated, )//IsCompanyVerified)
     @Get('products')
     async getProducts(@Request() req){
          return { data: await this.providerService.getProductEntriesof(req?.user?.id), msg: 'ok'}

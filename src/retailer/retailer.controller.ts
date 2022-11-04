@@ -7,10 +7,15 @@ import { IsRetailerAuthenticated } from 'src/company.strategy';
 import { RetailerService } from './retailer.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Retailer } from './retailer.model';
+import { ApiTags, ApiConsumes, ApiSecurity ,ApiBearerAuth, ApiOperation} from '@nestjs/swagger';
 
+
+@ApiTags('Retailer')
 @Controller('retailers')
 export class RetailerController {
     constructor(private retailerService: RetailerService){}
+
+    @ApiBearerAuth('retailer')
     @UseGuards(IsRetailerAuthenticated)
     @Get('me')
     async getRetailer(@Request() request){
@@ -18,6 +23,8 @@ export class RetailerController {
     }
     
 
+    @ApiOperation({summary: 'Verify a retailer used by the admin'})
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Post(":id/approval")
     async approveProvider(@Param('id') id:number){
@@ -29,6 +36,8 @@ export class RetailerController {
     }
 
 
+    @ApiOperation({summary: 'Remove verification used by the admin'})
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Delete(":id/approval")
     async removeProviderApprover(@Param('id') id:number){
@@ -40,6 +49,7 @@ export class RetailerController {
     }
 
 
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
     async getRetailerInfo(@Param('id') id: number){
@@ -51,6 +61,7 @@ export class RetailerController {
         return retailer
     }
 
+    @ApiBearerAuth('admin')
     @UseGuards(AuthGuard('jwt'))
     @Get()
     async getAllRetailers(@Query() query){
@@ -85,7 +96,8 @@ export class RetailerController {
         return retailers
     }
 
-
+    @ApiBearerAuth('retailer')
+    @ApiConsumes('mulipart/form-data')
     @UseGuards(IsRetailerAuthenticated)
   //  @UseInterceptors(FileInterceptor('file'))
     @Post('me/picture')
@@ -100,6 +112,7 @@ export class RetailerController {
 
     }
 
+    @ApiBearerAuth('retailer')
     @UseGuards(IsRetailerAuthenticated)
     @Patch('me') //update account Info Except profilepicture and password
     async changeProfileInfo(@Request() request, @Body() input: ChangeCompanyInfoDTO){
@@ -122,13 +135,18 @@ export class RetailerController {
         return output;
 
    }
-   @UseGuards(IsRetailerAuthenticated, IsCompanyVerified)
+
+
+
+   @ApiBearerAuth('retailer')
+   @UseGuards(IsRetailerAuthenticated, )//IsCompanyVerified)
    @Get('test')
    async test(@Request() request){
        return request.user;
    }
    
-   @UseGuards(IsRetailerAuthenticated, IsCompanyVerified,)
+   @ApiBearerAuth('retailer')
+   @UseGuards(IsRetailerAuthenticated,)// IsCompanyVerified,)
    @Patch('password') //this is to change the password from inside the app
    async changePasswordFromInsideTheApp(@Request() request, @Body() input: ChangePasswordFromInsideInput){
         if(!await this.retailerService.changePassword(request.user, input))
@@ -162,8 +180,11 @@ export class RetailerController {
        
       
 
-   }
 
+    }
+
+   @ApiOperation({summary: 'This is used to verify using code sent to the phone. Since, twilio is not working use from the db.'})
+   @ApiBearerAuth('retailer')
    @UseGuards(IsRetailerAuthenticated)
    @Post('verification')
    async verify(@Request() request, @Body() input: VerifyCompanyDto){
