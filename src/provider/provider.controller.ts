@@ -15,6 +15,14 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 @Controller('providers')
 export class ProviderController {
     constructor(private providerService: ProviderService){}
+
+      
+    @ApiBearerAuth('provider')
+    @UseGuards(IsProviderAuthenticated, )//IsCompanyVerified)
+    @Get('products')
+    async getProducts(@Request() req){
+         return { data: await this.providerService.getProductEntriesof(req?.user?.id), msg: 'ok'}
+    }
      
     @ApiOperation({summary: 'This is called by the admin to verify the companies'})
     @ApiBearerAuth('admin')
@@ -217,13 +225,7 @@ export class ProviderController {
             data: result
         }
     }
-  
-    @ApiBearerAuth('provider')
-    @UseGuards(IsProviderAuthenticated, )//IsCompanyVerified)
-    @Get('products')
-    async getProducts(@Request() req){
-         return { data: await this.providerService.getProductEntriesof(req?.user?.id), msg: 'ok'}
-    }
+
 
 }
   

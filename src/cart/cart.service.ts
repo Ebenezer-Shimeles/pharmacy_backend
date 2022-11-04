@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ProductEntry } from 'src/product/product.entry.model';
 import { Product } from 'src/product/product.model';
 import { Retailer } from 'src/retailer/retailer.model';
@@ -20,15 +20,22 @@ export class CartService {
 
     }
     async removeFromCart(userId: number, entryId: number){
-        const entry = await CartEntry.findBy(
-            {
-                id: entryId,
-                retailer:{
-                    id: userId
-                }
-            }
-        );
-        if(!entry) return false;
+        Logger.log({userId, entryId}, 'Test')
+        const entry = await CartEntry.find({
+           relations: ['retailer'],
+            where: {
+                
+                id: entryId
+            
+            }, 
+            
+        
+        });
+        Logger.log(`Deleting ${JSON.stringify(entry)}`, 'Test');
+       if(!entry[0] || entry[0].retailer.id !== userId) return false;
+
+        Logger.log(`Deleting ${entry}`, 'Test')
+        await CartEntry.remove(entry);
         return true;
     }
       

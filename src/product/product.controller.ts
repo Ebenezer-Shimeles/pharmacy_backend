@@ -73,13 +73,13 @@ export class ProductController {
         const product = await Product.findOneBy({id})
         if(!product) 
             throw new BadRequestException({error: "Product not found!"})
-        let entries = ProductEntry.createQueryBuilder()
+        let entries = await ProductEntry.createQueryBuilder()
                     .select('*')
-                    .where('for_product = :id and (remark like :searchTerm or batch_number like :searchTerm) ', {id, searchTerm})
+                    .where('for_product = :id', {id, searchTerm})
                     .limit(limit)
                     .orderBy('added_at')
 
-        return {data: entries.getRawMany(), msg: 'ok' };
+        return {data: await entries.getRawMany(), msg: 'ok' };
 
     }
     

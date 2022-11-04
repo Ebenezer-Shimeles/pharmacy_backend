@@ -1,5 +1,5 @@
 import { Controller, Post, Get, UseGuards , Request, Body, BadRequestException, Delete, Param, HttpStatus, HttpCode} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AddToCartInputDTO } from 'src/app.dto';
 import { IsRetailerAuthenticated } from 'src/company.strategy';
 import Api from 'twilio/lib/rest/Api';
@@ -28,13 +28,14 @@ export class CartController {
          return {data: await this.cartService.getEntriesOf(request.user.id), msg: 'ok'}
     }
 
+    @ApiOperation({summary: "The id is entry in cart id"})
     @ApiBearerAuth('retailer')
     @UseGuards(IsRetailerAuthenticated)
     @Delete(':entryId')
     async removeFromCart(@Request() req, @Param('entryId') entryId: number){
         if(!await this.cartService.removeFromCart(req.user.id,entryId ))
             throw new BadRequestException({error: "Cannot delete!"})
-        return {msg: "added to cart"}
+        return {msg: " removed from cart"}
     } 
 
 }
